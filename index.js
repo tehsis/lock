@@ -38,6 +38,8 @@ var bind = require('./lib/bind');
 /**
  * Expose `Auth0Lock` constructor
  */
+// Test
+var Recaptcha = window.Recaptcha = require('./lib/recaptcha');
 
 module.exports = Auth0Lock;
 
