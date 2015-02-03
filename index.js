@@ -35,11 +35,13 @@ var stop = require('./lib/stop-event');
 var utils = require('./lib/utils');
 var bind = require('./lib/bind');
 
+// Mock for recaptcha
+var login_attempts = window.login_attempts = 0;
+
+
 /**
  * Expose `Auth0Lock` constructor
  */
-// Test
-var Recaptcha = window.Recaptcha = require('./lib/recaptcha');
 
 module.exports = Auth0Lock;
 
@@ -410,7 +412,7 @@ Auth0Lock.prototype.show = function(options, callback) {
   var params = getShowParams(options, callback);
   var opts = _.extend({ mode: 'signin' }, params.options);
   return this.display(opts, params.callback);
-};
+}
 
 /**
  * Show widget on `signin` mode with
@@ -1022,14 +1024,17 @@ Auth0Lock.prototype._signinWithAuth0 = function (panel, connection) {
   var options = this.options;
   var email_input = panel.query('input[name=email]');
   var password_input = panel.query('input[name=password]');
+  var recaptcha_input = panel.query('input[name=recaptcha-token]');
   var username = email_input.val();
   var password = password_input.val();
+  var recaptcha_token = recaptcha_input.val();
   connection = connection || options._getAuth0Connection(username);
 
   var loginOptions = {
     connection: connection.name,
     username: connection.domain ? username.replace('@' + connection.domain, '') : username,
     password: password,
+    recaptcha_token: recaptcha_token,
     popup: self.options.popup,
     popupOptions: self.options.popupOptions,
     sso: self.options.sso
@@ -1060,6 +1065,17 @@ Auth0Lock.prototype._signinWithAuth0 = function (panel, connection) {
 
   this.$auth0.login(loginOptions, function (err) {
     if (!err) return;
+
+    login_attempts++;
+
+    if (login_attempts > 3) {
+      err.require_recaptcha = true; // mock. Next login attemp must include a recaptcha token.  
+    }
+
+    // Is there a better way to comunicate with panels?
+    if (err.require_recaptcha && 'function' === typeof panel.requireRecaptcha) {
+      panel.requireRecaptcha(err.require_recaptcha);
+    }
 
     // display `panel`
     self.setPanel(panel);
