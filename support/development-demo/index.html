@@ -128,16 +128,16 @@
       $(function() {
           var credentials = {
             mdocs: {
-              clientID: 'yKJO1ckwuY1X8gPEhTRfhJXyObfiLxih',
-              domain: 'mdocs.auth0.com'
+              clientID: 'thEwdwFKlPg31T5yLmwLWCxMa2rJypfT',
+              domain: 'flintstone.bedrock.auth0rocks.com'
             },
             ruleFail: {
-              clientID: 'bS4Htp89Y8vyYREFqqo980Bj4OlWKP2T',
-              domain: 'auth0-tests-lock.auth0.com'
+              clientID: 'thEwdwFKlPg31T5yLmwLWCxMa2rJypfT',
+              domain: 'flintstone.bedrock.auth0rocks.com'
             },
             free: {
-              clientID: 'zq4ImejULuvrPaazzFhttRgRUhCg4X3o',
-              domain: 'auth0-demo.auth0.com'
+              clientID: 'thEwdwFKlPg31T5yLmwLWCxMa2rJypfT',
+              domain: 'flintstone.bedrock.auth0rocks.com'
             }
           }
 
@@ -145,7 +145,7 @@
             var cid = credentials.mdocs.clientID;
             var domain = credentials.mdocs.domain;
 
-            var widget = new Auth0Lock(cid, domain);
+            var widget = new Auth0Lock(cid, domain, {tenant: 'tehsis'});
 
             trackEvents(widget);
             widget.show({
@@ -434,7 +434,7 @@
 
           var cid = credentials.mdocs.clientID;
           var domain = credentials.mdocs.domain;
-          var widget = new Auth0Lock(cid, domain);
+          var widget = new Auth0Lock(cid, domain, {tenant: 'tehsis'});
           var result = widget.parseHash(window.location.hash);
 
           var cid2 = credentials.free.clientID;
